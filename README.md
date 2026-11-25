@@ -6,3 +6,7 @@ Landing page tĩnh (1 file `index.html`, ảnh nhúng base64). Lead gửi về G
 1. Push repo này lên GitHub.
 2. Vercel → Add New Project → Import repo → Framework Preset: **Other** → Deploy (không cần build command, output là thư mục gốc).
 3. Mỗi lần push lên `main` Vercel tự deploy lại.
+
+## Trang con
+- `/` : Landing page Book Story
+- `/dang-ky` : Form đăng ký 3 bước (hồ sơ gửi về tab "Hồ sơ")
