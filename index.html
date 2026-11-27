@@ -367,7 +367,7 @@ function s2(){
  reveal("s2");
 }
 function s3(){
- var note=noAccent(LEAD.name||"")+" "+(LEAD.phone||"")+" - Phi tu van Book Story";
+ var note=noAccent(LEAD.name||"")+" "+(LEAD.phone||"")+" - Book Story";
  $("s3").innerHTML='<p class="st2">Bước 3/3 · Không bắt buộc</p><h3>Phí tư vấn ban đầu 500.000đ/dự án</h3>'+
  '<div class="inc"><b>Phí này gồm:</b><ul><li>Biên tập viên đánh giá chi tiết hồ sơ của bạn.</li><li>Phản hồi bằng văn bản trong 7 ngày làm việc (trừ thứ 7, chủ nhật và ngày lễ).</li>'+(FEE_NOTE?'<li>'+esc(FEE_NOTE)+'</li>':'')+'</ul></div>'+
  '<div class="pay"><img src="'+QR_SRC+'" alt="Mã QR chuyển khoản"><dl><dt>Ngân hàng</dt><dd>MSB (Ngân hàng TMCP Hàng Hải Việt Nam)</dd><dt>Số tài khoản</dt><dd>03101010147035<button class="cp" type="button" data-c="03101010147035">Sao chép</button></dd><dt>Chủ tài khoản</dt><dd>CTCP SACH ALPHA</dd><dt>Số tiền</dt><dd>500.000 VNĐ</dd><dt>Nội dung chuyển khoản</dt><dd>'+esc(note)+'<button class="cp" type="button" data-c="'+esc(note)+'">Sao chép</button></dd></dl></div>'+
