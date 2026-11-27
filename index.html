@@ -312,7 +312,6 @@ F.forEach(function(q,i){
  h+='<div class="fq" data-k="'+k+'"><b>'+q[1]+(q[3]?' <span class="req">*</span>':' <span class="opt">(không bắt buộc)</span>')+'</b>'+c+'<div class="err">Vui lòng điền mục này.</div></div>';
 });
 h+='<div class="fq" data-k="terms"><b>Bảo mật bản thảo và quy chế tham gia <span class="req">*</span></b><p class="hint2"><a href="https://docs.google.com/document/d/1u-dKgDCLHz4Phk_BjoGKTCdVJQLm3PKg/edit" target="_blank" rel="noopener">Đọc quy chế tham gia</a></p><label class="o"><input type="checkbox" name="terms"><span>Tôi đồng ý điều khoản bảo mật bản thảo và quy chế tham gia</span></label><div class="err">Vui lòng đồng ý để tiếp tục.</div></div>';
-h+='<div class="fq" data-k="privacy"><b>Sử dụng thông tin cá nhân <span class="req">*</span></b><label class="o"><input type="checkbox" name="privacy"><span>Tôi đồng ý Alpha Books xử lý thông tin cá nhân trong hồ sơ để đánh giá, tư vấn và liên hệ; mọi trích đoạn dùng cho truyền thông sẽ được hỏi ý kiến tôi trước</span></label><div class="err">Vui lòng đồng ý để tiếp tục.</div></div>';
 h+='<div class="fq" data-k="ok"><label class="o"><input type="checkbox" name="ok"><span>Tôi đồng ý để Alpha Books liên hệ và sử dụng thông tin này để tư vấn về Book Story.</span></label><div class="err">Vui lòng đồng ý để tiếp tục.</div></div>';
 h+='<button class="btn" id="go" type="submit" style="width:100%">Gửi đăng ký</button>';
 f.innerHTML='<p class="st2">Bước 1/2</p>'+h;
@@ -321,7 +320,7 @@ f.addEventListener("change",function(e){var t=e.target;if(t.type!="radio")return
 function val(k){var e=f.elements[k];if(!e)return"";if(e.length&&e[0].type=="radio"){for(var i=0;i<e.length;i++)if(e[i].checked)return e[i].value;return""}return e.type=="checkbox"?e.checked:(e.value||"").trim()}
 function check(){
  var bad=null;
- F.concat([["terms","","checkbox",1],["privacy","","checkbox",1],["ok","","checkbox",1]]).forEach(function(q){
+ F.concat([["terms","","checkbox",1],["ok","","checkbox",1]]).forEach(function(q){
   var v=val(q[0]),ok=!q[3]||!!v;
   if(ok&&q[0]=="email")ok=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
   if(ok&&q[0]=="phone")ok=v.replace(/\D/g,"").length>=9;
@@ -338,7 +337,7 @@ f.addEventListener("submit",function(e){
  if(Date.now()-T0<1500){return done()}
  var p=new URLSearchParams(location.search),d={type:"lead",submittedAt:new Date().toISOString(),page:location.href,referrer:document.referrer,tracking:{}};
  F.forEach(function(q){d[q[0]]=val(q[0])});
- d.consent="Đồng ý";d.terms="Đã đồng ý";d.privacy="Đã đồng ý";
+ d.consent="Đồng ý";d.terms="Đã đồng ý";
  ["utm_source","utm_medium","utm_campaign","utm_content","fbclid","gclid"].forEach(function(k){d.tracking[k]=p.get(k)||""});
  b.disabled=true;b.textContent="Đang gửi…";
  fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)})
@@ -354,7 +353,7 @@ function post(o,cb,er){
  var p=new URLSearchParams(location.search),t={};
  ["utm_source","utm_medium","utm_campaign","utm_content","fbclid","gclid"].forEach(function(k){t[k]=p.get(k)||""});
  o.type="lead_hoso";o.submittedAt=new Date().toISOString();o.page=location.href;o.referrer=document.referrer;o.tracking=t;
- o.d={name:LEAD.name,phone:LEAD.phone,email:LEAD.email,city:LEAD.city,year:LEAD.year,goal:LEAD.goal,terms:LEAD.terms,privacy:LEAD.privacy,author:LEAD.author,progress:LEAD.progress,doc:String(LEAD.doc||"").slice(0,45000)};
+ o.d={name:LEAD.name,phone:LEAD.phone,email:LEAD.email,city:LEAD.city,year:LEAD.year,goal:LEAD.goal,terms:LEAD.terms,author:LEAD.author,progress:LEAD.progress,doc:String(LEAD.doc||"").slice(0,45000)};
  fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(cb).catch(er)
 }
 var DOCQ=(function(){var m="Dán trực tiếp 3.000–5.000 từ bạn đã viết (một đoạn bất kỳ trong sách), hoặc mục lục, hoặc dán link Google Docs đã mở quyền xem.";return{
