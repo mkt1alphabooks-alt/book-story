@@ -371,7 +371,7 @@ function s2(){
  '<div class="pay"><img src="'+QR_SRC+'" alt="Mã QR chuyển khoản"><dl><dt>Ngân hàng</dt><dd>MSB (Ngân hàng TMCP Hàng Hải Việt Nam)</dd><dt>Số tài khoản</dt><dd>03101010147035<button class="cp" type="button" data-c="03101010147035">Sao chép</button></dd><dt>Chủ tài khoản</dt><dd>CTCP SACH ALPHA</dd><dt>Số tiền</dt><dd>500.000 VNĐ</dd><dt>Nội dung chuyển khoản</dt><dd>'+esc(note)+'<button class="cp" type="button" data-c="'+esc(note)+'">Sao chép</button></dd></dl></div>'+
  '<div class="fq" data-k="pay"><b>Bạn chọn <span class="req">*</span></b><label class="o"><input type="radio" name="pay" value="paid"><span>Tôi đã chuyển khoản 500.000đ</span></label><label class="o"><input type="radio" name="pay" value="later"><span>Tôi chưa thanh toán, muốn được tư vấn thêm</span></label><div class="err">Vui lòng chọn một mục.</div></div>'+
  '<div class="fq" id="rcw" style="display:none"><b>Ảnh chụp biên lai <span class="opt">(không bắt buộc)</span></b><p class="hint2">Đính kèm biên lai giúp chúng tôi xác nhận nhanh hơn. Nếu không tải được ảnh, nhắn Zalo 0978 361 290 (Ms. Xuyến).</p><input type="file" id="rc" accept="image/*"><img id="prev" alt="Biên lai"></div>'+
- '<button class="btn" id="n2" type="button" style="width:100%">Hoàn tất</button><button class="skip" id="k2" type="button">Để sau, chuyên viên sẽ gọi tôi</button>';
+ '<button class="btn" id="n2" type="button" style="width:100%">Hoàn tất</button>';
  reveal("s2");
 }
 function pic(file){return new Promise(function(res,rej){var r=new FileReader();r.onerror=rej;r.onload=function(){var im=new Image();im.onerror=rej;im.onload=function(){var s=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res({name:file.name.replace(/\.[^.]+$/,"")+".jpg",type:"image/jpeg",data:c.toDataURL("image/jpeg",.8)})};im.src=r.result};r.readAsDataURL(file)})}
@@ -380,7 +380,6 @@ var CARD=f.parentNode;
 CARD.addEventListener("click",function(e){
  var t=e.target,c=t.getAttribute&&t.getAttribute("data-c");
  if(c){try{navigator.clipboard.writeText(c);t.textContent="Đã chép"}catch(x){}return}
- if(t.id=="k2"){lock("s2");reveal("ok");return}
  if(t.id=="n2"){
   var bad=false,pv=CARD.querySelector('input[name="pay"]:checked');
   [["pay",!!pv]].forEach(function(a){var q=CARD.querySelector('[data-k="'+a[0]+'"]');q.classList.toggle("bad",!a[1]);if(!a[1]&&!bad){bad=true;q.scrollIntoView({behavior:"smooth",block:"center"})}});
