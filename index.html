@@ -302,7 +302,7 @@ var FEE_NOTE="";   // ví dụ: "Phí được trừ vào chi phí xuất bản 
 var T0=Date.now(),LEAD=null,RECEIPT=null,f=document.getElementById("f"),h="";
 F.forEach(function(q,i){
  var k=q[0],t=q[2],c="";
- if(k=="doc"){h+='<div class="fq" data-k="doc" id="dcw" style="display:none"><b><span id="dct"></span> <span class="opt">(không bắt buộc)</span></b><p class="hint2" id="dch"></p><textarea name="doc" autocomplete="off" style="min-height:130px"></textarea></div>';return}
+ if(k=="doc"){h+='<div class="fq" data-k="doc" id="dcw" style="display:none"><b><span id="dct"></span> <span class="opt">(bắt buộc nếu bạn nộp phí tư vấn)</span></b><p class="hint2" id="dch"></p><textarea name="doc" autocomplete="off" style="min-height:130px"></textarea><div class="err">Vui lòng kiểm tra lại nội dung tài liệu.</div></div>';return}
  if(t=="radio")c='<button type="button" class="sel" data-sel="'+k+'">Chọn…</button><div class="opts">'+q[5].map(function(o){return '<label class="o"><input type="radio" name="'+k+'" value="'+o+'"><span>'+o+'</span></label>'}).join("")+'</div>';
  else if(t=="area")c=(q[4]?'<p class="hint2">'+q[4]+'</p>':'')+'<textarea name="'+k+'" autocomplete="off"></textarea>';
  else c='<input type="'+t+'" name="'+k+'" placeholder="'+(q[4]||"")+'" autocomplete="off"'+(t=="number"?' min="1930" max="2012" inputmode="numeric"':"")+'>';
@@ -322,6 +322,7 @@ function check(){
   if(ok&&q[0]=="email")ok=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
   if(ok&&q[0]=="phone")ok=v.replace(/\D/g,"").length>=9;
   if(ok&&q[0]=="author")ok=v.length>=10;
+  if(q[0]=="doc")ok=true;
   if(ok&&q[0]=="year"){var y=+v;ok=y>=1930&&y<=2012}
   var el=f.querySelector('[data-k="'+q[0]+'"]');el.classList.toggle("bad",!ok);if(!ok&&!bad)bad=el;
  });
@@ -359,6 +360,7 @@ var DOCQ=(function(){var m="Dán trực tiếp 3.000–5.000 từ bạn đã vi�
  "Đang viết (dưới một nửa)":["Đoạn viết mẫu hoặc mục lục",m],
  "Đã viết hơn một nửa":["Đoạn viết mẫu, mục lục hoặc link bản thảo",m],
  "Đã có bản thảo hoàn chỉnh":["Link bản thảo hoàn chỉnh","Dán link Google Docs / Drive đã mở quyền “Bất kỳ ai có đường liên kết đều xem được”. Có thể dán thêm mục lục."]}})();
+function docOk(v){v=String(v||"").trim();return /https?:\/\/|docs\.google|drive\.google/i.test(v)||v.length>=300}
 function s2(){
   var note=noAccent(LEAD.name||"")+" "+(LEAD.phone||"")+" - Book Story";
  $("s2").innerHTML='<p class="st2">Bước 2/2 · Không bắt buộc</p><h3>Cảm ơn bạn, chúng tôi đã nhận thông tin và hồ sơ!</h3>'+
@@ -367,6 +369,7 @@ function s2(){
  '<div class="inc"><b>Phí này gồm:</b><ul><li>Biên tập viên đánh giá chi tiết hồ sơ của bạn.</li><li>Phản hồi bằng văn bản trong 7 ngày làm việc (trừ thứ 7, chủ nhật và ngày lễ).</li>'+(FEE_NOTE?'<li>'+esc(FEE_NOTE)+'</li>':'')+'</ul></div>'+
  '<div class="pay"><img src="'+QR_SRC+'" alt="Mã QR chuyển khoản"><dl><dt>Ngân hàng</dt><dd>MSB (Ngân hàng TMCP Hàng Hải Việt Nam)</dd><dt>Số tài khoản</dt><dd>03101010147035<button class="cp" type="button" data-c="03101010147035">Sao chép</button></dd><dt>Chủ tài khoản</dt><dd>CTCP SACH ALPHA</dd><dt>Số tiền</dt><dd>500.000 VNĐ</dd><dt>Nội dung chuyển khoản</dt><dd>'+esc(note)+'<button class="cp" type="button" data-c="'+esc(note)+'">Sao chép</button></dd></dl></div>'+
  '<div class="fq" data-k="pay"><b>Bạn chọn <span class="req">*</span></b><label class="o"><input type="radio" name="pay" value="paid"><span>Tôi đã chuyển khoản 500.000đ</span></label><label class="o"><input type="radio" name="pay" value="later"><span>Tôi chưa thanh toán, muốn được tư vấn thêm</span></label><div class="err">Vui lòng chọn một mục.</div></div>'+
+ '<div class="fq" id="dw2" data-k="doc2" style="display:none"><b>Tài liệu để biên tập tư vấn <span class="req">*</span></b><p class="hint2" id="dh2"></p><textarea id="doc2" autocomplete="off" style="min-height:130px"></textarea><div class="err">Vui lòng mô tả ý tưởng (khoảng 300 ký tự trở lên, vài đoạn ngắn là đủ) hoặc dán link tài liệu, để biên tập có nội dung tư vấn cho bạn.</div></div>'+
  '<div class="fq" id="rcw" style="display:none"><b>Ảnh chụp biên lai <span class="opt">(không bắt buộc)</span></b><p class="hint2">Đính kèm biên lai giúp chúng tôi xác nhận nhanh hơn. Nếu không tải được ảnh, nhắn Zalo 0978 361 290 (Ms. Xuyến).</p><input type="file" id="rc" accept="image/*"><img id="prev" alt="Biên lai"></div>'+
  '<button class="btn" id="n2" type="button" style="width:100%">Hoàn tất</button>';
  reveal("s2");
@@ -380,6 +383,11 @@ CARD.addEventListener("click",function(e){
  if(t.id=="n2"){
   var bad=false,pv=CARD.querySelector('input[name="pay"]:checked');
   [["pay",!!pv]].forEach(function(a){var q=CARD.querySelector('[data-k="'+a[0]+'"]');q.classList.toggle("bad",!a[1]);if(!a[1]&&!bad){bad=true;q.scrollIntoView({behavior:"smooth",block:"center"})}});
+  if(!bad&&pv.value=="paid"){
+   var ex=$("doc2").value.trim(),full=String(LEAD.doc||"")+(ex?"\n"+ex:"");
+   if(!docOk(full)){var q2=$("dw2");q2.style.display="block";q2.classList.add("bad");q2.scrollIntoView({behavior:"smooth",block:"center"});bad=true}
+   else LEAD.doc=full;
+  }
   if(bad)return;
   t.disabled=true;t.textContent="Đang gửi…";
   post({stage:3,pay:pv.value,receipt:pv.value=="paid"?RECEIPT:null},function(){
@@ -393,7 +401,8 @@ CARD.addEventListener("click",function(e){
 CARD.addEventListener("change",function(e){
  var t=e.target;
  if(t.name=="progress"){var m=DOCQ[t.value];if(m){$("dct").textContent=m[0];$("dch").textContent=m[1];$("dcw").style.display="block"}}
- if(t.name=="pay"){$("rcw").style.display=t.value=="paid"?"block":"none";CARD.querySelector('[data-k="pay"]').classList.remove("bad")}
+ if(t.name=="pay"){$("rcw").style.display=t.value=="paid"?"block":"none";CARD.querySelector('[data-k="pay"]').classList.remove("bad");
+  var need=t.value=="paid"&&!docOk(LEAD.doc),m2=DOCQ[LEAD.progress];$("dw2").style.display=need?"block":"none";if(need&&m2)$("dh2").textContent=m2[0]+": "+m2[1]}
  if(t.id=="rc"&&t.files[0])pic(t.files[0]).then(function(o){RECEIPT=o;var p=$("prev");p.src=o.data;p.style.display="block"}).catch(function(){alert("Không đọc được ảnh, vui lòng chọn ảnh khác.")});
 });
 
