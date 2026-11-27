@@ -346,15 +346,23 @@ function post(o,cb,er){
  var p=new URLSearchParams(location.search),t={};
  ["utm_source","utm_medium","utm_campaign","utm_content","fbclid","gclid"].forEach(function(k){t[k]=p.get(k)||""});
  o.type="lead_hoso";o.submittedAt=new Date().toISOString();o.page=location.href;o.referrer=document.referrer;o.tracking=t;
- o.d={name:LEAD.name,phone:LEAD.phone,email:LEAD.email,city:LEAD.city,year:LEAD.year,goal:LEAD.goal,author:$("au").value.trim(),work:$("wk").value.trim(),doc:$("dc").value.trim()};
+ o.d={name:LEAD.name,phone:LEAD.phone,email:LEAD.email,city:LEAD.city,year:LEAD.year,goal:LEAD.goal,author:$("au").value.trim(),work:$("wk").value.trim(),progress:(CARD.querySelector('input[name="pg"]:checked')||{}).value||"",doc:$("dc").value.trim().slice(0,45000)};
  fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(cb).catch(er)
 }
+var DOCQ=(function(){var m="Dán trực tiếp 3.000–5.000 từ bạn đã viết (một đoạn bất kỳ trong sách), hoặc mục lục, hoặc dán link Google Docs đã mở quyền xem.";return{
+ "Mới có ý tưởng":["Mô tả ý tưởng của bạn","Khoảng 100–200 từ: bạn muốn viết điều gì, cho ai, vì sao."],
+ "Đã có đề cương":["Mục lục / đề cương","Dán trực tiếp mục lục, hoặc dán link Google Docs đã mở quyền xem."],
+ "Đang viết (dưới một nửa)":["Đoạn viết mẫu hoặc mục lục",m],
+ "Đã viết hơn một nửa":["Đoạn viết mẫu, mục lục hoặc link bản thảo",m],
+ "Đã có bản thảo hoàn chỉnh":["Link bản thảo hoàn chỉnh","Dán link Google Docs / Drive đã mở quyền “Bất kỳ ai có đường liên kết đều xem được”. Có thể dán thêm mục lục."]}})();
 function s2(){
+ var pg=["Mới có ý tưởng","Đã có đề cương","Đang viết (dưới một nửa)","Đã viết hơn một nửa","Đã có bản thảo hoàn chỉnh"];
  $("s2").innerHTML='<p class="st2">Bước 2/3 · Không bắt buộc</p><h3>Cảm ơn bạn, chúng tôi đã nhận thông tin!</h3>'+
- '<p>Chuyên viên sẽ gọi tư vấn 15 phút. Nếu muốn gửi hồ sơ để biên tập viên đánh giá ngay, bạn điền thêm 2 mục dưới đây.</p>'+
- '<div class="fq" data-k="au"><b>Giới thiệu về tác giả (1–2 câu) <span class="req">*</span></b><textarea id="au" placeholder="Bạn là ai, làm nghề gì, có trải nghiệm gì đáng kể?"></textarea><div class="err">Vui lòng điền mục này.</div></div>'+
- '<div class="fq" data-k="wk"><b>Giới thiệu về tác phẩm (1–2 câu) <span class="req">*</span></b><textarea id="wk" placeholder="Cuốn sách kể về điều gì, dành cho ai?"></textarea><div class="err">Vui lòng điền mục này.</div></div>'+
- '<div class="fq"><b>Tài liệu gửi kèm <span class="opt">(không bắt buộc)</span></b><input type="text" id="dc" placeholder="Dán link Google Docs / Drive" autocomplete="off"><p class="hint2">Một trong các loại: đoạn viết mẫu 3.000–5.000 chữ, mục lục hoặc bản thảo hoàn chỉnh. Nhớ mở quyền “Bất kỳ ai có đường liên kết đều xem được”. Chưa có thì gửi sau qua Zalo.</p></div>'+
+ '<p>Chuyên viên sẽ gọi tư vấn 15 phút. Nếu muốn gửi hồ sơ để biên tập viên đánh giá ngay, bạn điền thêm các mục dưới đây.</p>'+
+ '<div class="fq" data-k="au"><b>Giới thiệu ngắn về bạn <span class="req">*</span></b><p class="hint2">Nghề nghiệp, lĩnh vực, những gì bạn đã làm được. Khoảng 100–150 từ.</p><textarea id="au"></textarea><div class="err">Vui lòng điền mục này.</div></div>'+
+ '<div class="fq" data-k="wk"><b>Giới thiệu cuốn sách trong 1 câu <span class="req">*</span></b><p class="hint2">Cuốn sách kể về điều gì, dành cho ai?</p><textarea id="wk" style="min-height:64px"></textarea><div class="err">Vui lòng điền mục này.</div></div>'+
+ '<div class="fq" data-k="pg"><b>Tiến độ hiện tại <span class="req">*</span></b>'+pg.map(function(o){return '<label class="o"><input type="radio" name="pg" value="'+o+'"><span>'+o+'</span></label>'}).join("")+'<div class="err">Vui lòng chọn một mục.</div></div>'+
+ '<div class="fq" id="dcw" style="display:none"><b><span id="dct"></span> <span class="opt">(không bắt buộc)</span></b><p class="hint2" id="dch"></p><textarea id="dc" style="min-height:130px"></textarea></div>'+
  '<button class="btn" id="n2" type="button" style="width:100%">Tiếp tục</button><button class="skip" id="k2" type="button">Để sau, chuyên viên sẽ gọi tôi</button>';
  show("s2");
 }
@@ -376,7 +384,7 @@ CARD.addEventListener("click",function(e){
  if(c){try{navigator.clipboard.writeText(c);t.textContent="Đã chép"}catch(x){}return}
  if(t.id=="k2"){done();return}
  if(t.id=="n2"){
-  var bad=false;["au","wk"].forEach(function(k){var ok=$(k).value.trim().length>=10,q=CARD.querySelector('[data-k="'+k+'"]');q.classList.toggle("bad",!ok);if(!ok&&!bad){bad=true;q.scrollIntoView({behavior:"smooth",block:"center"})}});
+  var bad=false;["au","wk","pg"].forEach(function(k){var ok=k=="pg"?!!CARD.querySelector('input[name="pg"]:checked'):$(k).value.trim().length>=10,q=CARD.querySelector('[data-k="'+k+'"]');q.classList.toggle("bad",!ok);if(!ok&&!bad){bad=true;q.scrollIntoView({behavior:"smooth",block:"center"})}});
   if(bad)return;
   t.disabled=true;t.textContent="Đang gửi…";
   post({stage:2},function(){try{fbq("track","SubmitApplication")}catch(x){}s3()},function(){t.disabled=false;t.textContent="Tiếp tục";alert("Gửi chưa được. Vui lòng thử lại hoặc gọi hotline 0936 136 060.")});
@@ -394,6 +402,7 @@ CARD.addEventListener("click",function(e){
 });
 CARD.addEventListener("change",function(e){
  var t=e.target;
+ if(t.name=="pg"){var m=DOCQ[t.value];$("dct").textContent=m[0];$("dch").textContent=m[1];$("dcw").style.display="block";CARD.querySelector('[data-k="pg"]').classList.remove("bad")}
  if(t.name=="pay"){$("rcw").style.display=t.value=="paid"?"block":"none";CARD.querySelector('[data-k="pay"]').classList.remove("bad")}
  if(t.id=="rc"&&t.files[0])pic(t.files[0]).then(function(o){RECEIPT=o;var p=$("prev");p.src=o.data;p.style.display="block"}).catch(function(){alert("Không đọc được ảnh, vui lòng chọn ảnh khác.")});
 });
